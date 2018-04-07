@@ -1,0 +1,17 @@
+﻿@model WorkoutTracker.Web.ViewModels.CategoryViewModel
+
+@{
+    ViewBag.Title = "Category";
+}
+
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/app/category.js"></script>
+
+<h4>Add Category</h4>
+<hr />
+<div>
+    @Html.Partial("_CategorySearch", Model)
+    <br>
+    @Html.Partial("_Categories", Model)
+</div>
+
