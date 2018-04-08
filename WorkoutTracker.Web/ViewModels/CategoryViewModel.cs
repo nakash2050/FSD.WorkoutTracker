@@ -8,5 +8,7 @@ namespace WorkoutTracker.Web.ViewModels
         public IEnumerable<Category> Categories { get; set; }
 
         public Category Category { get; set; }
+
+        public bool IsModal { get; set; }
     }
 }

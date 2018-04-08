@@ -8,7 +8,7 @@
         calories = oCalBurnt.val();
     }
 
-    calories = (calories * 10 + 0.01 * 10) / 10;
+    calories = (calories * 10 + 0.1 * 10) / 10;
     oCalBurnt.val(calories);
 }
 
@@ -23,7 +23,7 @@ function subtractCalories() {
     }
 
     if (calories > 0) {
-        calories = (calories * 10 - 0.01 * 10) / 10;
+        calories = (calories * 10 - 0.1 * 10) / 10;
         oCalBurnt.val(calories);
     }
 }

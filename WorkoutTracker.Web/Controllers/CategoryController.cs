@@ -10,26 +10,25 @@ namespace WorkoutTracker.Web.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly CategoryBAL _category;
+        private readonly CategoryBAL _categoryBAL;
+        private IEnumerable<Category> _categories;
+        private CategoryViewModel _categoryViewModel;
 
         public CategoryController()
         {
-            _category = new CategoryBAL();
+            _categoryBAL = new CategoryBAL();
+            _categories = _categoryBAL.GetAllCategories();
+            _categoryViewModel = new CategoryViewModel()
+            {
+                Categories = _categories
+            };
         }
 
         // GET: Category
         public ActionResult Index()
         {
-            Session["Categories"] = null;
-
-            var categories = _category.GetAllCategories();
-            CategoryViewModel categoryViewModel = new CategoryViewModel()
-            {
-                Categories = categories
-            };
-
-            Session["Categories"] = categories;
-            return View("Category", categoryViewModel);
+            Session["Categories"] = _categories;
+            return View("Category", _categoryViewModel);
         }
 
         [HttpPost]
@@ -37,90 +36,104 @@ namespace WorkoutTracker.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = _category.AddCategory(category);
+                var result = _categoryBAL.AddCategory(category);
                 ModelState.Clear();
             }
 
-            var categories = _category.GetAllCategories();
-            CategoryViewModel categoryViewModel = new CategoryViewModel()
+            _categories = _categoryBAL.GetAllCategories();
+            _categoryViewModel = new CategoryViewModel()
             {
-                Categories = categories
+                Categories = _categories
             };
 
-            Session["Categories"] = categories;
-            return View("Category", categoryViewModel);
+            Session["Categories"] = _categories;
+            return View("Category", _categoryViewModel);
         }
 
         [HttpGet]
         public ActionResult CategoryFilter(string title)
         {
-            CategoryViewModel viewModel = null;
-
             if (Session["Categories"] != null)
             {
                 var categories = Session["categories"] as IEnumerable<Category>;
                 var filteredCategories = categories.Where(category => category.Title.ToLower().Contains(title.ToLower()));
-                viewModel = new CategoryViewModel() { Categories = filteredCategories };
+                _categoryViewModel = new CategoryViewModel() { Categories = filteredCategories };
             }
 
-            return PartialView("_Categories", viewModel);
+            return PartialView("_Categories", _categoryViewModel);
         }
 
         [HttpGet]
         public ActionResult DeleteCategory(int id)
         {
-            IEnumerable<Category> categories = null;
-            CategoryViewModel viewModel = null;
-
-            if(_category.DeleteCategory(id))
+            if(_categoryBAL.DeleteCategory(id))
             {
-                categories = _category.GetAllCategories();
-                Session["Categories"] = categories;
+                _categories = _categoryBAL.GetAllCategories();
+                Session["Categories"] = _categories;
             }
             else
             {
-                categories = Session["categories"] as IEnumerable<Category>;
+                _categories = Session["categories"] as IEnumerable<Category>;
             }
 
-            viewModel = new CategoryViewModel() { Categories = categories };
-            return PartialView("_Categories", viewModel);
+            _categoryViewModel = new CategoryViewModel() { Categories = _categories };
+            return PartialView("_Categories", _categoryViewModel);
         }
 
         [HttpPost]
         public ActionResult UpdateCategory(Category category)
         {
-            IEnumerable<Category> categories = null;
-            CategoryViewModel viewModel = null;
-
             if(ModelState.IsValid)
             {
-                if(_category.UpdateCategory(category))
+                if(_categoryBAL.UpdateCategory(category))
                 {
-                    categories = _category.GetAllCategories();
-                    Session["Categories"] = categories;
+                    _categories = _categoryBAL.GetAllCategories();
+                    Session["Categories"] = _categories;
                 }
                 else
                 {
-                    categories = Session["categories"] as IEnumerable<Category>;
+                    _categories = Session["categories"] as IEnumerable<Category>;
                 }
             }
 
-            viewModel = new CategoryViewModel() { Categories = categories };
-            return PartialView("_Categories", viewModel);
+            _categoryViewModel = new CategoryViewModel() { Categories = _categories };
+            return PartialView("_Categories", _categoryViewModel);
         }
 
-        public ActionResult CategoryModal()
+        public ActionResult CategoryModal(int id)
         {
             Session["Categories"] = null;
 
-            var categories = _category.GetAllCategories();
-            CategoryViewModel categoryViewModel = new CategoryViewModel()
+            _categories = _categoryBAL.GetAllCategories();
+            _categoryViewModel = new CategoryViewModel()
             {
-                Categories = categories
+                Categories = _categories,
+                IsModal = id == 1         
             };
 
-            Session["Categories"] = categories;
-            return PartialView("Category", categoryViewModel);
+            Session["Categories"] = _categories;
+            return PartialView("Category", _categoryViewModel);
+        }
+
+        public ActionResult CategoryModalAdd(Category category)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = _categoryBAL.AddCategory(category);
+                ModelState.Clear();
+
+                _categories = _categoryBAL.GetAllCategories();
+                _categoryViewModel = new CategoryViewModel()
+                {
+                    Categories = _categories,
+                    IsModal = true
+                };
+
+                Session["Categories"] = _categories;
+                return PartialView("_Categories", _categoryViewModel);
+            }
+
+            return Json(new { errors = ModelState.Select(x => x.Value.Errors).Where(y => y.Count > 0).FirstOrDefault() });
         }
     }
 }
