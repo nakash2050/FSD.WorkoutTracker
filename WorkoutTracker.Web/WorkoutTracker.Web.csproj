@@ -186,6 +186,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\app\ajax.manager.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -204,6 +205,7 @@
     <Content Include="Views\Category\Category.cshtml" />
     <Content Include="Views\Shared\_CategorySearch.cshtml" />
     <Content Include="Views\Create\Create.cshtml" />
+    <Content Include="Views\ViewAll\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -36,6 +36,19 @@ namespace WorkoutTracker.Business
             }
         }
 
+        public bool UpdateWorkout(Workout workout)
+        {
+            using (var unitOfWork = new UnitOfWork(new WorkoutTrackerContext()))
+            {
+                var wkout = unitOfWork.Workouts.Get(workout.WorkoutId);
+                wkout.Title = workout.Title;
+                wkout.Note = workout.Note;
+                wkout.CategoryId = workout.CategoryId;
+                var result = unitOfWork.Complete();
+                return result == 1;
+            }
+        }
+
         public bool DeleteWorkout(int id)
         {
             using (var unitOfWork = new UnitOfWork(new WorkoutTrackerContext()))
