@@ -1,13 +1,12 @@
 ﻿var AjaxManager = {
-    URL: '../IntelliModsREST.svc/',
-    Method: '',
-    LoadingMessage: '',
+    URL: '',
+    Method: '',    
     Call: function (requestData, CallBackResponse) {
         SendRequest(this.URL + this.Method, this.LoadingMessage, requestData, CallBackResponse);
     }
 }
 
-function SendRequest(requestURL, loadingMessage, requestData, CallBackResponse) {
+function SendRequest(requestURL, loadingMessage, requestData, callBackResponse) {
     $.ajax({
         async: true,
         type: requestData == null ? "GET" : "POST",
@@ -20,7 +19,7 @@ function SendRequest(requestURL, loadingMessage, requestData, CallBackResponse) 
         beforeSend: function (xhr) {
         },
         success: function (response, textStatus, jqXHR) {      
-            CallBackResponse(response);
+            callBackResponse(response);
         },
         error: function (jqXHR, textStatus, errorThrown) {
             console.log(jqXHR + "-" + textStatus + "-" + errorThrown);
